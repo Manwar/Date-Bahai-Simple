@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.01';
+$Date::Bahai::Simple::VERSION = '0.02';
 
 =head1 NAME
 
@@ -8,27 +8,13 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
 use 5.006;
 use Data::Dumper;
 use Time::localtime;
-use Date::Utils qw(
-    $BAHAI_EPOCH
-    $BAHAI_YEAR
-    $BAHAI_MONTH
-    $BAHAI_DAY
-    $BAHAI_MONTHS
-
-    jwday
-    get_major_cycle_year
-    gregorian_to_julian
-    julian_to_gregorian
-    gregorian_to_bahai
-    is_gregorian_leap_year
-);
 
 use Moo;
 use namespace::clean;
@@ -43,19 +29,25 @@ Represents the Bahai date.
 
 has major => (is => 'rw');
 has cycle => (is => 'rw');
-has year  => (is => 'rw', isa => $BAHAI_YEAR,  predicate => 1);
-has month => (is => 'rw', isa => $BAHAI_MONTH, predicate => 1);
-has day   => (is => 'rw', isa => $BAHAI_DAY,   predicate => 1);
+has year  => (is => 'rw', predicate => 1);
+has month => (is => 'rw', predicate => 1);
+has day   => (is => 'rw', predicate => 1);
+
+with 'Date::Utils::Bahai';
 
 sub BUILD {
     my ($self) = @_;
+
+    $self->validate_year($self->year)   if $self->has_year;
+    $self->validate_month($self->month) if $self->has_month;
+    $self->validate_day($self->day)     if $self->has_day;
 
     unless ($self->has_year && $self->has_month && $self->has_day) {
         my $today = localtime;
         my $year  = $today->year + 1900;
         my $month = $today->mon + 1;
         my $day   = $today->mday;
-        my ($major, $cycle, $y, $m, $d) = gregorian_to_bahai($year, $month, $day);
+        my ($major, $cycle, $y, $m, $d) = $self->gregorian_to_bahai($year, $month, $day);
         $self->major($major);
         $self->cycle($cycle);
         $self->year($y);
@@ -95,17 +87,17 @@ Returns julian date equivalent of the Bahai date.
 sub to_julian {
     my ($self) = @_;
 
-    my $year  = (julian_to_gregorian($BAHAI_EPOCH))[0];
+    my $year  = ($self->julian_to_gregorian($self->bahai_epoch))[0];
     my $month = $self->month;
     my $gregorian_year = (361 * ($self->major - 1)) +
                          (19  * ($self->cycle - 1)) +
                          ($self->year - 1) + $year;
 
-    return gregorian_to_julian($gregorian_year, 3, 20)
+    return $self->gregorian_to_julian($gregorian_year, 3, 20)
            +
            (19 * ($month - 1))
            +
-           (($month != 20) ? 0 : (is_gregorian_leap_year($gregorian_year + 1) ? -14 : -15))
+           (($month != 20) ? 0 : ($self->is_gregorian_leap_year($gregorian_year + 1) ? -14 : -15))
            +
            $self->day;
 }
@@ -119,7 +111,7 @@ Returns gregorian date (yyyy-mm-dd) equivalent of the Bahai date.
 sub to_gregorian {
     my ($self) = @_;
 
-    my @date = julian_to_gregorian($self->to_julian);
+    my @date = $self->julian_to_gregorian($self->to_julian);
     return sprintf("%04d-%02d-%02d", $date[0], $date[1], $date[2]);
 }
 
@@ -144,7 +136,7 @@ Returns day of the week, starting 0 for Jamal, 1 for Kamal and so on.
 sub day_of_week {
     my ($self) = @_;
 
-    return jwday($self->to_julian);
+    return $self->jwday($self->to_julian);
 }
 
 =head2 get_year()
@@ -163,7 +155,7 @@ sub as_string {
     my ($self) = @_;
 
     return sprintf("%d, %s %d BE",
-                   $self->day, $BAHAI_MONTHS->[$self->month], $self->get_year);
+                   $self->day, $self->bahai_months->[$self->month], $self->get_year);
 }
 
 =head1 AUTHOR

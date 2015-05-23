@@ -23,7 +23,7 @@ WriteMakefile(
         'Moo'                => 0,
         'namespace::clean'   => 0,
         'Date::Utils::Bahai' => 0,
-        'Time::localtime'    => 0,
+        'Time::localtime'    => '1.02',
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Date-Bahai-Simple*' },

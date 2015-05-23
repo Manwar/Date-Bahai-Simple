@@ -1,5 +1,8 @@
 Revision history for Date::Bahai::Simple
 
+0.03  Sat May 23 22:45:00 2015
+      - Updated method to_julian() to make use of Date::Utils::Bahai::bahai_to_julian().
+
 0.02  Thu Apr 23 23:25:00 2015
       - Re-structured and consumed Date::Utils::Bahai as Moo Role.
 

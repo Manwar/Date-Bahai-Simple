@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.02';
+$Date::Bahai::Simple::VERSION = '0.03';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
@@ -87,19 +87,8 @@ Returns julian date equivalent of the Bahai date.
 sub to_julian {
     my ($self) = @_;
 
-    my $year  = ($self->julian_to_gregorian($self->bahai_epoch))[0];
-    my $month = $self->month;
-    my $gregorian_year = (361 * ($self->major - 1)) +
-                         (19  * ($self->cycle - 1)) +
-                         ($self->year - 1) + $year;
-
-    return $self->gregorian_to_julian($gregorian_year, 3, 20)
-           +
-           (19 * ($month - 1))
-           +
-           (($month != 20) ? 0 : ($self->is_gregorian_leap_year($gregorian_year + 1) ? -14 : -15))
-           +
-           $self->day;
+    return $self->bahai_to_julian(
+        $self->major, $self->cycle, $self->year, $self->month, $self->day);
 }
 
 =head2 to_gregorian()

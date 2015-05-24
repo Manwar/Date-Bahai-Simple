@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.04';
+$Date::Bahai::Simple::VERSION = '0.05';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =cut
 
@@ -97,17 +97,17 @@ sub BUILD {
     # prints today's bahai date
     print Date::Bahai::Simple->new->as_string, "\n";
 
-    my $date = Date::Bahai::Simple->new({ major => 1, cycle => 10,  year => 1, month => 1, day => 1 });
-    print "Date: $date\n";
+    # print given bahai date
+    print Date::Bahai::Simple->new({ major => 1, cycle => 10,  year => 1, month => 1, day => 1 })->as_string, "\n";
 
     # prints equivalent Julian date
-    print $date->to_julian, "\n";
+    print Date::Bahai::Simple->new({ major => 1, cycle => 10,  year => 1, month => 1, day => 1 })->to_julian, "\n";
 
     # prints equivalent Gregorian date
-    print $date->to_gregorian, "\n";
+    print Date::Bahai::Simple->new({ major => 1, cycle => 10,  year => 1, month => 1, day => 1 })->to_gregorian, "\n";
 
     # prints day of the week index (0 for Jamal, 1 for Kamal and so on)
-    print $date->day_of_week, "\n";
+    print Date::Bahai::Simple->new({ major => 1, cycle => 10,  year => 1, month => 1, day => 1 })->day_of_week, "\n";
 
 =head1 METHODS
 
@@ -137,8 +137,8 @@ sub to_julian {
 
 =head2 from_julian($julian_date)
 
-Returns Bahai date component as list (majaor, cycle, year, month, day) equivalent
-of the given Julian date C<$julian_date>.
+Returns Bahai  date as an object of type L<Date::Bahai::Simple> equivalent of the
+given Julian date C<$julian_date>.
 
 =cut
 
@@ -188,8 +188,8 @@ sub to_gregorian {
 
 =head2 from_gregorian($year, $month, $day)
 
-Returns Bahai date component as list  equivalent
-of the given gregorian date.
+Returns Bahai  date as an object of type L<Date::Bahai::Simple> equivalent of the
+given gregorian C<$year>, C<$month> and C<$day>.
 
 =cut
 
@@ -243,6 +243,8 @@ sub get_year {
 }
 
 =head2 get_major_cycle_year($bahai_year)
+
+Returns major, cycle and year as list of the given C<$bahai_year>.
 
 =cut
 

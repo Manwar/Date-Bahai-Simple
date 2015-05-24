@@ -1,5 +1,12 @@
 Revision history for Date::Bahai::Simple
 
+0.05  Mon May 25 00:25:00 2015
+      - Added unit tests for newly added methods.
+      - Updated description in the pod for method from_julian().
+      - Updated description in the pod for method from_gregorian().
+      - Added description to the pod for method get_major_cycle_year().
+      - Updated code in the section "SYNOPSIS".
+
 0.04  Sun May 24 21:05:00 2015
       - Removed the dependency on Date::Utils::Bahai as it's no longer exists.
       - Added the dependency on Date::Utils v0.08.

@@ -1,5 +1,10 @@
 Revision history for Date::Bahai::Simple
 
+0.04  Sun May 24 21:05:00 2015
+      - Removed the dependency on Date::Utils::Bahai as it's no longer exists.
+      - Added the dependency on Date::Utils v0.08.
+      - Merged the code from Date::Utils::Bahai into Date::Bahai::Simple.
+
 0.03  Sat May 23 22:45:00 2015
       - Updated method to_julian() to make use of Date::Utils::Bahai::bahai_to_julian().
 

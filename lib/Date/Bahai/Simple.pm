@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.03';
+$Date::Bahai::Simple::VERSION = '0.04';
 
 =head1 NAME
 
@@ -8,13 +8,15 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
 use 5.006;
 use Data::Dumper;
 use Time::localtime;
+use POSIX qw/floor/;
+use Astro::Utils;
 
 use Moo;
 use namespace::clean;
@@ -27,32 +29,63 @@ Represents the Bahai date.
 
 =cut
 
+our $BAHAI_MONTHS = [
+    '',
+    'Baha',    'Jalal', 'Jamal',  'Azamat', 'Nur',       'Rahmat',
+    'Kalimat', 'Kamal', 'Asma',   'Izzat',  'Mashiyyat', 'Ilm',
+    'Qudrat',  'Qawl',  'Masail', 'Sharaf', 'Sultan',    'Mulk',
+    'Ala'
+];
+
+our $BAHAI_CYCLES = [
+    '',
+    'Alif', 'Ba',     'Ab',    'Dal',  'Bab',    'Vav',
+    'Abad', 'Jad',    'Baha',  'Hubb', 'Bahhaj', 'Javab',
+    'Ahad', 'Vahhab', 'Vidad', 'Badi', 'Bahi',   'Abha',
+    'Vahid'
+];
+
+our $BAHAI_DAYS = [
+    '<yellow><bold>    Jamal </bold></yellow>',
+    '<yellow><bold>    Kamal </bold></yellow>',
+    '<yellow><bold>    Fidal </bold></yellow>',
+    '<yellow><bold>     Idal </bold></yellow>',
+    '<yellow><bold> Istijlal </bold></yellow>',
+    '<yellow><bold> Istiqlal </bold></yellow>',
+    '<yellow><bold>    Jalal </bold></yellow>'
+];
+
+has bahai_epoch  => (is => 'ro', default => sub { 2394646.5     });
+has bahai_days   => (is => 'ro', default => sub { $BAHAI_DAYS   });
+has bahai_months => (is => 'ro', default => sub { $BAHAI_MONTHS });
+has bahai_cycles => (is => 'ro', default => sub { $BAHAI_CYCLES });
+
 has major => (is => 'rw');
 has cycle => (is => 'rw');
 has year  => (is => 'rw', predicate => 1);
 has month => (is => 'rw', predicate => 1);
 has day   => (is => 'rw', predicate => 1);
 
-with 'Date::Utils::Bahai';
+with 'Date::Utils';
 
 sub BUILD {
     my ($self) = @_;
 
-    $self->validate_year($self->year)   if $self->has_year;
-    $self->validate_month($self->month) if $self->has_month;
     $self->validate_day($self->day)     if $self->has_day;
+    $self->validate_month($self->month) if $self->has_month;
+    $self->validate_year($self->year)   if $self->has_year;
 
     unless ($self->has_year && $self->has_month && $self->has_day) {
         my $today = localtime;
         my $year  = $today->year + 1900;
         my $month = $today->mon + 1;
         my $day   = $today->mday;
-        my ($major, $cycle, $y, $m, $d) = $self->gregorian_to_bahai($year, $month, $day);
-        $self->major($major);
-        $self->cycle($cycle);
-        $self->year($y);
-        $self->month($m);
-        $self->day($d);
+        my $date  = $self->from_gregorian($year, $month, $day);
+        $self->major($date->major);
+        $self->cycle($date->cycle);
+        $self->year($date->year);
+        $self->month($date->month);
+        $self->day($date->day);
     }
 }
 
@@ -87,8 +120,57 @@ Returns julian date equivalent of the Bahai date.
 sub to_julian {
     my ($self) = @_;
 
-    return $self->bahai_to_julian(
-        $self->major, $self->cycle, $self->year, $self->month, $self->day);
+    my ($g_year)  = $self->julian_to_gregorian($self->bahai_epoch);
+    my ($gm, $gd) = _vernal_equinox_month_day($g_year);
+    my $gy = (361 * ($self->major - 1)) +
+             (19  * ($self->cycle - 1)) +
+             ($self->year - 1) + $g_year;
+
+    return $self->gregorian_to_julian($gy, $gm, $gd)
+           +
+           (19 * ($self->month - 1))
+           +
+           (($self->month != 20) ? 0 : ($self->is_gregorian_leap_year($gy + 1) ? -14 : -15))
+           +
+           $self->day;
+}
+
+=head2 from_julian($julian_date)
+
+Returns Bahai date component as list (majaor, cycle, year, month, day) equivalent
+of the given Julian date C<$julian_date>.
+
+=cut
+
+sub from_julian {
+    my ($self, $julian_date) = @_;
+
+    $julian_date = floor($julian_date) + 0.5;
+    my $gregorian_year = ($self->julian_to_gregorian($julian_date))[0];
+    my $start_year     = ($self->julian_to_gregorian($self->bahai_epoch))[0];
+
+    my $j1 = $self->gregorian_to_julian($gregorian_year, 1, 1);
+    my ($gm, $gd) = _vernal_equinox_month_day($gregorian_year);
+    my $j2 = $self->gregorian_to_julian($gregorian_year, $gm, $gd);
+
+    my $bahai_year = $gregorian_year - ($start_year + ((($j1 <= $julian_date) && ($julian_date <= $j2)) ? 1 : 0));
+    my ($major, $cycle, $year) = $self->get_major_cycle_year($bahai_year);
+
+    my $b_date1 = Date::Bahai::Simple->new({
+        major => $major, cycle => $cycle, year => $year, month => 1, day => 1 });
+    my $days  = $julian_date - $b_date1->to_julian;
+
+    my $b_date2 = Date::Bahai::Simple->new({
+        major => $major, cycle => $cycle, year => $year, month => 20, day => 1 });
+    my $bld   = $b_date2->to_julian;
+    my $month = ($julian_date >= $bld) ? 20 : (floor($days / 19) + 1);
+
+    my $b_date3 = Date::Bahai::Simple->new({
+        major => $major, cycle => $cycle, year => $year, month => $month, day => 1 });
+    my $day   = ($julian_date + 1) - $b_date3->to_julian;
+
+    return Date::Bahai::Simple->new({
+        major => $major, cycle => $cycle, year => $year, month => $month, day => $day });
 }
 
 =head2 to_gregorian()
@@ -103,6 +185,26 @@ sub to_gregorian {
     my @date = $self->julian_to_gregorian($self->to_julian);
     return sprintf("%04d-%02d-%02d", $date[0], $date[1], $date[2]);
 }
+
+=head2 from_gregorian($year, $month, $day)
+
+Returns Bahai date component as list  equivalent
+of the given gregorian date.
+
+=cut
+
+sub from_gregorian {
+    my ($self, $year, $month, $day) = @_;
+
+    my $date = $self->from_julian($self->gregorian_to_julian($year, $month, $day));
+    return Date::Bahai::Simple->new({
+        major => $date->major,
+        cycle => $date->cycle,
+        year  => $date->year,
+        month => $date->month,
+        day   => $date->day });
+}
+
 
 =head2 day_of_week()
 
@@ -140,11 +242,87 @@ sub get_year {
     return ($self->major * (19 * ($self->cycle - 1))) + $self->year;
 }
 
+=head2 get_major_cycle_year($bahai_year)
+
+=cut
+
+sub get_major_cycle_year {
+    my ($self, $bahai_year) = @_;
+
+    my $major = floor($bahai_year / 361) + 1;
+    my $cycle = floor(($bahai_year % 361) / 19) + 1;
+    my $year  = ($bahai_year % 19) + 1;
+
+    return ($major, $cycle, $year);
+}
+
+=head2 validate_month($month)
+
+Dies if the given C<$month> is not a valid Bahai month.
+
+=cut
+
+sub validate_month {
+    my ($self, $month) = @_;
+
+    die("ERROR: Invalid month [$month].\n")
+        unless (defined($month) && ($month =~ /^\d{1,2}$/) && ($month >= 1) && ($month <= 20));
+}
+
+=head2 validate_day($day)
+
+Dies if the given C<$day> is not a valid Bahai day.
+
+=cut
+
+sub validate_day {
+    my ($self, $day) = @_;
+
+    die ("ERROR: Invalid day [$day].\n")
+        unless (defined($day) && ($day =~ /^\d{1,2}$/) && ($day >= 1) && ($day <= 19));
+}
+
 sub as_string {
     my ($self) = @_;
 
     return sprintf("%d, %s %d BE",
                    $self->day, $self->bahai_months->[$self->month], $self->get_year);
+}
+
+#
+#
+# PRIVATE METHODS
+
+sub _vernal_equinox_month_day {
+    my ($year) = @_;
+
+    # Source: Wikipedia
+    # In 2014, the Universal House of Justice selected  Tehran, the birthplace of
+    # Baha'u'lláh, as the location to which the date of  the vernal equinox is to
+    # be fixed, thereby "unlocking" the Badi calendar from the Gregorian calendar.
+    # For determining  the dates,  astronomical  tables from reliable sources are
+    # used.
+    # In  the  same  message  the  Universal  House  of  Justice decided that the
+    # birthdays  of  the Bab and Baha'u'lláh will be celebrated on "the first and
+    # the  second  day  following  the  occurrence  of  the eighth new moon after
+    # Naw-Ruz"  (also with the use of astronomical tables) and fixed the dates of
+    # the Bahaí Holy Days in the Baha'í calendar, standardizing dates for Baha'ís
+    # worldwide. These changes came into effect as of sunset on 20 March 2015.The
+    # changes  take effect from the next Bahai New Year, from sunset on March 20,
+    # 2015.
+
+    my $month = 3;
+    my $day   = 20;
+
+    if ($year >= 2015) {
+        my $equinox_date = calculate_equinox('mar', 'utc', $year);
+        if ($equinox_date =~ /\d{4}\-(\d{2})\-(\d{2})\s/) {
+            $month = $1;
+            $day   = $2;
+        }
+    }
+
+    return ($month, $day);
 }
 
 =head1 AUTHOR

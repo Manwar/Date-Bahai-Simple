@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.05';
+$Date::Bahai::Simple::VERSION = '0.06';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.05
+Version 0.06
 
 =cut
 

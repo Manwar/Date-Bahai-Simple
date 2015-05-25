@@ -1,5 +1,8 @@
 Revision history for Date::Bahai::Simple
 
+0.06  Mon May 25 02:45:00 2015
+      - Released pull request change #1 from syohex (github username).
+
 0.05  Mon May 25 00:25:00 2015
       - Added unit tests for newly added methods.
       - Updated description in the pod for method from_julian().

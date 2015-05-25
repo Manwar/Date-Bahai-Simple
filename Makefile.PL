@@ -24,6 +24,7 @@ WriteMakefile(
         'namespace::clean' => 0,
         'Date::Utils'      => '0.08',
         'Time::localtime'  => '1.02',
+        'Astro::Utils'     => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Date-Bahai-Simple*' },

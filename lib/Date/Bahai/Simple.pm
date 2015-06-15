@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.06';
+$Date::Bahai::Simple::VERSION = '0.07';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =cut
 
@@ -205,7 +205,6 @@ sub from_gregorian {
         day   => $date->day });
 }
 
-
 =head2 day_of_week()
 
 Returns day of the week, starting 0 for Jamal, 1 for Kamal and so on.
@@ -267,7 +266,7 @@ Dies if the given C<$month> is not a valid Bahai month.
 sub validate_month {
     my ($self, $month) = @_;
 
-    die("ERROR: Invalid month [$month].\n")
+    die sprintf("ERROR: Invalid month [%s].\n", defined($month)?($month):(''))
         unless (defined($month) && ($month =~ /^\d{1,2}$/) && ($month >= 1) && ($month <= 20));
 }
 
@@ -280,7 +279,7 @@ Dies if the given C<$day> is not a valid Bahai day.
 sub validate_day {
     my ($self, $day) = @_;
 
-    die ("ERROR: Invalid day [$day].\n")
+    die sprintf("ERROR: Invalid day [%s].\n", defined($day)?($day):(''))
         unless (defined($day) && ($day =~ /^\d{1,2}$/) && ($day >= 1) && ($day <= 19));
 }
 

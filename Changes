@@ -1,5 +1,11 @@
 Revision history for Date::Bahai::Simple
 
+0.08  Tue Jun 23 09:50:00 2015
+      - Updated method to_gregorian() to return (yyyy,mm,dd) to be consistent with other Date::* packages of mine.
+      - Updated unit test to reflect the above changes.
+      - Updated section "SYNOPSIS" to reflect the above changes.
+      - Also add example for method from_gregorian() and from_julian().
+
 0.07  Mon Jun 15 17:00:00 2015
       - Updated the following methods to handle undef (day and month).
         - validate_day()

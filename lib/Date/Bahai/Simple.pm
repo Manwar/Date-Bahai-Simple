@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.07';
+$Date::Bahai::Simple::VERSION = '0.08';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.07
+Version 0.08
 
 =cut
 
@@ -94,20 +94,28 @@ sub BUILD {
     use strict; use warnings;
     use Date::Bahai::Simple;
 
-    # prints today's bahai date
+    # prints today's Bahai date.
     print Date::Bahai::Simple->new->as_string, "\n";
 
-    # print given bahai date
-    print Date::Bahai::Simple->new({ major => 1, cycle => 10,  year => 1, month => 1, day => 1 })->as_string, "\n";
+    my $date = Date::Bahai::Simple->new({ major => 1, cycle => 10,  year => 1, month => 1, day => 1 });
 
-    # prints equivalent Julian date
-    print Date::Bahai::Simple->new({ major => 1, cycle => 10,  year => 1, month => 1, day => 1 })->to_julian, "\n";
+    # print given Bahai date.
+    print $date->as_string, "\n";
 
-    # prints equivalent Gregorian date
-    print Date::Bahai::Simple->new({ major => 1, cycle => 10,  year => 1, month => 1, day => 1 })->to_gregorian, "\n";
+    # prints equivalent Julian date.
+    print $date->to_julian, "\n";
 
-    # prints day of the week index (0 for Jamal, 1 for Kamal and so on)
-    print Date::Bahai::Simple->new({ major => 1, cycle => 10,  year => 1, month => 1, day => 1 })->day_of_week, "\n";
+    # prints equivalent Gregorian date.
+    print sprintf("%04d-%02d-%02d", $date->to_gregorian), "\n";
+
+    # prints day of the week index (0 for Jamal, 1 for Kamal and so on).
+    print $date->day_of_week, "\n";
+
+    # prints equivalent Bahai date of the given Gregorian date.
+    print $date->from_gregorian(2015, 4, 16), "\n";
+
+    # prints equivalent Bahai date of the given Julian date.
+    print $date->from_julian(2457102.5), "\n";
 
 =head1 METHODS
 
@@ -175,15 +183,14 @@ sub from_julian {
 
 =head2 to_gregorian()
 
-Returns gregorian date (yyyy-mm-dd) equivalent of the Bahai date.
+Returns gregorian date (yyyy,mm,dd) equivalent of the Bahai date.
 
 =cut
 
 sub to_gregorian {
     my ($self) = @_;
 
-    my @date = $self->julian_to_gregorian($self->to_julian);
-    return sprintf("%04d-%02d-%02d", $date[0], $date[1], $date[2]);
+    return $self->julian_to_gregorian($self->to_julian);
 }
 
 =head2 from_gregorian($year, $month, $day)

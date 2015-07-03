@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.08';
+$Date::Bahai::Simple::VERSION = '0.09';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.08
+Version 0.09
 
 =cut
 
@@ -236,23 +236,11 @@ sub day_of_week {
     return $self->jwday($self->to_julian);
 }
 
-=head2 get_year()
-
-Returns the bahai year e.g. 172
-
-=cut
-
 sub get_year {
     my ($self) = @_;
 
     return ($self->major * (19 * ($self->cycle - 1))) + $self->year;
 }
-
-=head2 get_major_cycle_year($bahai_year)
-
-Returns major, cycle and year as list of the given C<$bahai_year>.
-
-=cut
 
 sub get_major_cycle_year {
     my ($self, $bahai_year) = @_;
@@ -264,24 +252,12 @@ sub get_major_cycle_year {
     return ($major, $cycle, $year);
 }
 
-=head2 validate_month($month)
-
-Dies if the given C<$month> is not a valid Bahai month.
-
-=cut
-
 sub validate_month {
     my ($self, $month) = @_;
 
     die sprintf("ERROR: Invalid month [%s].\n", defined($month)?($month):(''))
         unless (defined($month) && ($month =~ /^\d{1,2}$/) && ($month >= 1) && ($month <= 20));
 }
-
-=head2 validate_day($day)
-
-Dies if the given C<$day> is not a valid Bahai day.
-
-=cut
 
 sub validate_day {
     my ($self, $day) = @_;

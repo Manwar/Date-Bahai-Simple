@@ -1,5 +1,9 @@
 Revision history for Date::Bahai::Simple
 
+0.09  Fri Jul 03 11:00:00 2015
+      - Added the dependency on Date::Utils v0.09.
+      - Tidied up pod document in general.
+
 0.08  Tue Jun 23 09:50:00 2015
       - Updated method to_gregorian() to return (yyyy,mm,dd) to be consistent with other Date::* packages of mine.
       - Updated unit test to reflect the above changes.

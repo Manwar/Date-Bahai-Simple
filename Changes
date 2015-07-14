@@ -1,5 +1,9 @@
 Revision history for Date::Bahai::Simple
 
+0.10  Tue Jul 14 14:05:00 2015
+      - Added the dependency on Date::Utils v0.10.
+      - Added method get_calendar().
+
 0.09  Fri Jul 03 11:00:00 2015
       - Added the dependency on Date::Utils v0.09.
       - Tidied up pod document in general.

@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.09';
+$Date::Bahai::Simple::VERSION = '0.10';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.09
+Version 0.10
 
 =cut
 
@@ -46,13 +46,7 @@ our $BAHAI_CYCLES = [
 ];
 
 our $BAHAI_DAYS = [
-    '<yellow><bold>    Jamal </bold></yellow>',
-    '<yellow><bold>    Kamal </bold></yellow>',
-    '<yellow><bold>    Fidal </bold></yellow>',
-    '<yellow><bold>     Idal </bold></yellow>',
-    '<yellow><bold> Istijlal </bold></yellow>',
-    '<yellow><bold> Istiqlal </bold></yellow>',
-    '<yellow><bold>    Jalal </bold></yellow>'
+    'Jamal', 'Kamal', 'Fidal', 'Idal', 'Istijlal', 'Istiqlal', 'Jalal'
 ];
 
 has bahai_epoch  => (is => 'ro', default => sub { 2394646.5     });
@@ -210,6 +204,36 @@ sub from_gregorian {
         year  => $date->year,
         month => $date->month,
         day   => $date->day });
+}
+
+=head2 get_calendar($month, $year)
+
+Returns color coded Bahai calendar for the given C<$month> and C<$year>.
+
+=cut
+
+sub get_calendar {
+    my ($self, $month, $year) = @_;
+
+    $self->validate_month($month);
+    $self->validate_year($year);
+
+    my ($major, $cycle, $y) = $self->get_major_cycle_year($year - 1);
+    my $date = Date::Bahai::Simple->new({
+        major => $major,
+        cycle => $cycle,
+        year  => $y,
+        month => $month,
+        day   => 1 });
+
+    return $self->create_calendar(
+        {
+            start_index => $date->day_of_week,
+            month_name  => $self->bahai_months->[$month],
+            days        => 19,
+            day_names   => $self->bahai_days,
+            year        => $year
+        });
 }
 
 =head2 day_of_week()

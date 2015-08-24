@@ -1,5 +1,9 @@
 Revision history for Date::Bahai::Simple
 
+0.11  Mon Aug 24 11:45:00 2015
+      - Added the dependency on Date::Utils v0.11.
+      - Updated method validate_day() and validate_month() to make use of Date::Exception package.
+
 0.10  Tue Jul 14 14:05:00 2015
       - Added the dependency on Date::Utils v0.10.
       - Added method get_calendar().

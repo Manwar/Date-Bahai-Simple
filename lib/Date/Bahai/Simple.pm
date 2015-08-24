@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.10';
+$Date::Bahai::Simple::VERSION = '0.11';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.10
+Version 0.11
 
 =cut
 
@@ -17,6 +17,8 @@ use Data::Dumper;
 use Time::localtime;
 use POSIX qw/floor/;
 use Astro::Utils;
+use Date::Exception::InvalidDay;
+use Date::Exception::InvalidMonth;
 
 use Moo;
 use namespace::clean;
@@ -279,14 +281,28 @@ sub get_major_cycle_year {
 sub validate_month {
     my ($self, $month) = @_;
 
-    die sprintf("ERROR: Invalid month [%s].\n", defined($month)?($month):(''))
+    my @caller = caller(0);
+    @caller    = caller(2) if $caller[3] eq '(eval)';
+
+    Date::Exception::InvalidMonth->throw({
+        method      => __PACKAGE__."::validate_month",
+        message     => sprintf("ERROR: Invalid month [%s].", defined($month)?($month):('')),
+        filename    => $caller[1],
+        line_number => $caller[2] })
         unless (defined($month) && ($month =~ /^\d{1,2}$/) && ($month >= 1) && ($month <= 20));
 }
 
 sub validate_day {
     my ($self, $day) = @_;
 
-    die sprintf("ERROR: Invalid day [%s].\n", defined($day)?($day):(''))
+    my @caller = caller(0);
+    @caller    = caller(2) if $caller[3] eq '(eval)';
+
+    Date::Exception::InvalidDay->throw({
+        method      => __PACKAGE__."::validate_day",
+        message     => sprintf("ERROR: Invalid day [%s].", defined($day)?($day):('')),
+        filename    => $caller[1],
+        line_number => $caller[2] })
         unless (defined($day) && ($day =~ /^\d{1,2}$/) && ($day >= 1) && ($day <= 19));
 }
 

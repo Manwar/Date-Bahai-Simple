@@ -11,7 +11,6 @@ WriteMakefile(
     VERSION_FROM       => 'lib/Date/Bahai/Simple.pm',
     ABSTRACT_FROM      => 'lib/Date/Bahai/Simple.pm',
     LICENSE            => 'artistic_2',
-    PL_FILES           => {},
     MIN_PERL_VERSION   => 5.006,
     CONFIGURE_REQUIRES => {
         'ExtUtils::MakeMaker' => 0,
@@ -22,7 +21,7 @@ WriteMakefile(
     PREREQ_PM => {
         'Moo'              => '2.000000',
         'namespace::clean' => '0.24',
-        'Date::Utils'      => '0.11',
+        'Date::Utils'      => '0.16',
         'Time::localtime'  => '1.02',
         'Astro::Utils'     => '0.01',
     },
@@ -33,8 +32,8 @@ WriteMakefile(
         resources => {
             repository => {
                 type => 'git',
-                url  => 'https://github.com/Manwar/Date-Bahai-Simple.git',
-                web  => 'https://github.com/Manwar/Date-Bahai-Simple',
+                url  => 'https://github.com/manwar/Date-Bahai-Simple.git',
+                web  => 'https://github.com/manwar/Date-Bahai-Simple',
             },
         }})
      : ()

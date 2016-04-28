@@ -1,6 +1,7 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION = '0.11';
+$Date::Bahai::Simple::VERSION   = '0.12';
+$Date::Bahai::Simple::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
 
@@ -8,7 +9,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.11
+Version 0.12
 
 =cut
 
@@ -355,7 +356,7 @@ Mohammad S Anwar, C<< <mohammad.anwar at yahoo.com> >>
 
 =head1 REPOSITORY
 
-L<https://github.com/Manwar/Date-Bahai-Simple>
+L<https://github.com/manwar/Date-Bahai-Simple>
 
 =head1 BUGS
 
@@ -394,7 +395,7 @@ L<http://search.cpan.org/dist/Date-Bahai-Simple/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2015 Mohammad S Anwar.
+Copyright (C) 2015 - 2016 Mohammad S Anwar.
 
 This program  is  free software; you can redistribute it and / or modify it under
 the  terms  of the the Artistic License (2.0). You may obtain a  copy of the full

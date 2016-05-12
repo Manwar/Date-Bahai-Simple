@@ -6,6 +6,6 @@ Makefile.PL
 README
 lib/Date/Bahai/Simple.pm
 t/00-load.t
-t/01-date-bahai-simple.t
+t/date-bahai-simple.t
 t/manifest.t
 t/pod.t

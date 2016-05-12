@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION   = '0.12';
+$Date::Bahai::Simple::VERSION   = '0.13';
 $Date::Bahai::Simple::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.12
+Version 0.13
 
 =cut
 
@@ -53,8 +53,8 @@ our $BAHAI_DAYS = [
 ];
 
 has bahai_epoch  => (is => 'ro', default => sub { 2394646.5     });
-has bahai_days   => (is => 'ro', default => sub { $BAHAI_DAYS   });
-has bahai_months => (is => 'ro', default => sub { $BAHAI_MONTHS });
+has days         => (is => 'ro', default => sub { $BAHAI_DAYS   });
+has months       => (is => 'ro', default => sub { $BAHAI_MONTHS });
 has bahai_cycles => (is => 'ro', default => sub { $BAHAI_CYCLES });
 
 has major => (is => 'rw');
@@ -218,8 +218,18 @@ Returns color coded Bahai calendar for the given C<$month> and C<$year>.
 sub get_calendar {
     my ($self, $month, $year) = @_;
 
-    $self->validate_month($month);
-    $self->validate_year($year);
+    if (defined $month && defined $year) {
+        $self->validate_month($month);
+        $self->validate_year($year);
+
+        if ($month =~ /^[A-Z]+$/i) {
+            $month = $self->get_month_number($month);
+        }
+    }
+    else {
+        $month = $self->month;
+        $year  = $self->get_year;
+    }
 
     my ($major, $cycle, $y) = $self->get_major_cycle_year($year - 1);
     my $date = Date::Bahai::Simple->new({
@@ -232,9 +242,9 @@ sub get_calendar {
     return $self->create_calendar(
         {
             start_index => $date->day_of_week,
-            month_name  => $self->bahai_months->[$month],
+            month_name  => $self->get_month_name($month),
             days        => 19,
-            day_names   => $self->bahai_days,
+            day_names   => $self->days,
             year        => $year
         });
 }
@@ -282,8 +292,12 @@ sub get_major_cycle_year {
 sub validate_month {
     my ($self, $month) = @_;
 
+    if (defined $month && ($month =~ /[A-Z]/i)) {
+        return $self->validate_month_name($month);
+    }
+
     my @caller = caller(0);
-    @caller    = caller(2) if $caller[3] eq '(eval)';
+    @caller    = caller(2) if ($caller[3] eq '(eval)');
 
     Date::Exception::InvalidMonth->throw({
         method      => __PACKAGE__."::validate_month",
@@ -311,7 +325,7 @@ sub as_string {
     my ($self) = @_;
 
     return sprintf("%d, %s %d BE",
-                   $self->day, $self->bahai_months->[$self->month], $self->get_year);
+                   $self->day, $self->get_month_name, $self->get_year);
 }
 
 #
@@ -357,6 +371,20 @@ Mohammad S Anwar, C<< <mohammad.anwar at yahoo.com> >>
 =head1 REPOSITORY
 
 L<https://github.com/manwar/Date-Bahai-Simple>
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<Date::Gregorian::Simple>
+
+=item L<Date::Hijri::Simple>
+
+=item L<Date::Persian::Simple>
+
+=item L<Date::Saka::Simple>
+
+=back
 
 =head1 BUGS
 

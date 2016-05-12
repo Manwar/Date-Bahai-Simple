@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use 5.006;
-use Test::More tests => 25;
+use Test::More tests => 27;
 use strict; use warnings;
 use Date::Bahai::Simple;
 
@@ -22,6 +22,12 @@ like($@, qr/ERROR: Invalid year \[\-168\]./);
 
 eval { $date->validate_month(21); };
 like($@, qr/ERROR: Invalid month \[21\]./);
+
+eval { $date->validate_month('Bahax'); };
+like($@, qr/ERROR: Invalid month name/);
+
+eval { $date->validate_month_name('Jalal'); };
+like($@, qr/^\s*$/);
 
 eval { $date->validate_day(20); };
 like($@, qr/ERROR: Invalid day \[20\]./);

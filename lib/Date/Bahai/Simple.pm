@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION   = '0.13';
+$Date::Bahai::Simple::VERSION   = '0.14';
 $Date::Bahai::Simple::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.13
+Version 0.14
 
 =cut
 
@@ -207,46 +207,6 @@ sub from_gregorian {
         year  => $date->year,
         month => $date->month,
         day   => $date->day });
-}
-
-=head2 get_calendar($month, $year)
-
-Returns color coded Bahai calendar for the given C<$month> and C<$year>.
-
-=cut
-
-sub get_calendar {
-    my ($self, $month, $year) = @_;
-
-    if (defined $month && defined $year) {
-        $self->validate_month($month);
-        $self->validate_year($year);
-
-        if ($month =~ /^[A-Z]+$/i) {
-            $month = $self->get_month_number($month);
-        }
-    }
-    else {
-        $month = $self->month;
-        $year  = $self->get_year;
-    }
-
-    my ($major, $cycle, $y) = $self->get_major_cycle_year($year - 1);
-    my $date = Date::Bahai::Simple->new({
-        major => $major,
-        cycle => $cycle,
-        year  => $y,
-        month => $month,
-        day   => 1 });
-
-    return $self->create_calendar(
-        {
-            start_index => $date->day_of_week,
-            month_name  => $self->get_month_name($month),
-            days        => 19,
-            day_names   => $self->days,
-            year        => $year
-        });
 }
 
 =head2 day_of_week()

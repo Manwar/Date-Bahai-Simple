@@ -1,5 +1,8 @@
 Revision history for Date::Bahai::Simple
 
+0.15  Wed Aug 03 12:25:00 2016
+      - Updated the dependency on Date::Utils v0.21.
+
 0.14  Mon Jul 18 10:50:00 2016
       - Updated the dependency on Date::Utils v0.20.
       - Dropped method get_calendar() as it's no longer relevant here.

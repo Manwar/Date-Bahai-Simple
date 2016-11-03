@@ -1,5 +1,8 @@
 Revision history for Date::Bahai::Simple
 
+0.16  Thu Nov 03 09:40:00 2016
+      - Added key 'provides' to the Makefile.PL script.
+
 0.15  Wed Aug 03 12:25:00 2016
       - Updated the dependency on Date::Utils v0.21.
 

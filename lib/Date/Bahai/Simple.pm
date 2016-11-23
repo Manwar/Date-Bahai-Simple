@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION   = '0.16';
+$Date::Bahai::Simple::VERSION   = '0.17';
 $Date::Bahai::Simple::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.16
+Version 0.17
 
 =cut
 
@@ -200,13 +200,7 @@ given gregorian C<$year>, C<$month> and C<$day>.
 sub from_gregorian {
     my ($self, $year, $month, $day) = @_;
 
-    my $date = $self->from_julian($self->gregorian_to_julian($year, $month, $day));
-    return Date::Bahai::Simple->new({
-        major => $date->major,
-        cycle => $date->cycle,
-        year  => $date->year,
-        month => $date->month,
-        day   => $date->day });
+    return $self->from_julian($self->gregorian_to_julian($year, $month, $day));
 }
 
 =head2 day_of_week()

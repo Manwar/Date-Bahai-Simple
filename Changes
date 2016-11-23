@@ -1,5 +1,8 @@
 Revision history for Date::Bahai::Simple
 
+0.17  Wed Nov 23 13:30:00 2016
+      - Improved method from_gregorian().
+
 0.16  Thu Nov 03 09:40:00 2016
       - Added key 'provides' to the Makefile.PL script.
 

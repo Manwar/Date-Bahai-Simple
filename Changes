@@ -1,5 +1,8 @@
 Revision history for Date::Bahai::Simple
 
+0.18  Fri Nov 25 15:25:00 2016
+      - Added method get_date() and is_same().
+
 0.17  Wed Nov 23 13:30:00 2016
       - Improved method from_gregorian().
 

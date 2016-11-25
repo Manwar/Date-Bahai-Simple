@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use 5.006;
-use Test::More tests => 27;
+use Test::More tests => 29;
 use strict; use warnings;
 use Date::Bahai::Simple;
 
@@ -16,6 +16,9 @@ is($date->cycle, 10);
 is($date->day_of_week, 6);
 is(sprintf("%04d-%02d-%02d", $date->to_gregorian), '2015-03-21');
 is(join(", ", $date->get_major_cycle_year(171)), '1, 10, 1');
+
+is($date->is_same($date->get_date(1, 1, 172)), 1, "dates are same");
+is($date->is_same($date->get_date(2, 1, 172)), 0, "dates are not same");
 
 eval { $date->validate_year(-168); };
 like($@, qr/ERROR: Invalid year \[\-168\]./);

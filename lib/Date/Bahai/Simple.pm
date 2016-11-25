@@ -1,6 +1,6 @@
 package Date::Bahai::Simple;
 
-$Date::Bahai::Simple::VERSION   = '0.17';
+$Date::Bahai::Simple::VERSION   = '0.18';
 $Date::Bahai::Simple::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Date::Bahai::Simple - Represents Bahai date.
 
 =head1 VERSION
 
-Version 0.17
+Version 0.18
 
 =cut
 
@@ -231,6 +231,39 @@ sub get_year {
     my ($self) = @_;
 
     return ($self->major * (19 * ($self->cycle - 1))) + $self->year;
+}
+
+sub get_date {
+    my ($self, $day, $month, $year) = @_;
+
+    $self->validate_day($day);
+    $self->validate_month($month);
+    $self->validate_year($year);
+
+    my ($major, $cycle, $bahai_year) = $self->get_major_cycle_year($year - 1);
+
+    return Date::Bahai::Simple->new({
+        major => $major,
+        cycle => $cycle,
+        year  => $bahai_year,
+        month => $month,
+        day   => $day });
+}
+
+sub is_same {
+    my ($self, $other) = @_;
+
+    return 0 unless (ref($other) eq 'Date::Bahai::Simple');
+
+    return (($self->major == $other->major)
+            &&
+            ($self->cycle == $other->cycle)
+            &&
+            ($self->year == $other->year)
+            &&
+            ($self->get_month_name eq $other->get_month_name)
+            &&
+            ($self->day == $other->day))+0;
 }
 
 sub get_major_cycle_year {

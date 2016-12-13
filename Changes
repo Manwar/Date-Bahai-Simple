@@ -1,5 +1,8 @@
 Revision history for Date::Bahai::Simple
 
+0.19  Tue Dec 13 10:35:00 2016
+      - Added test scripts (t/meta-json.t and t/meta-yml.t).
+
 0.18  Fri Nov 25 15:25:00 2016
       - Added method get_date() and is_same().
 
